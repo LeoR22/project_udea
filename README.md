@@ -1,22 +1,45 @@
 # Proyecto ETL: Inventario de Servicios y APIs
 
-Este proyecto realiza un proceso ETL (Extracción, Transformación y Carga) para integrar datos de dos fuentes distintas: un inventario de servicios y APIs, y registros de OpenSearch. Los datos son limpiados, normalizados y cargados a una base de datos MySQL para su análisis y visualización posterior, por ejemplo en Looker Studio.
+Este proyecto realiza un proceso ETL (Extracción, Transformación y Carga) para integrar y analizar datos de servicios de integración (APIs, adaptadores, servicios backend) desplegados en producción, con el objetivo de mejorar la visibilidad operativa, detectar errores y facilitar la toma de decisiones a través de herramientas como Looker Studio y Power BI.
 
 ---
+
+
+# 🎯 Objetivo
+Realizar un análisis descriptivo y visual de los servicios de integración en producción, consolidando datos desde OpenSearch y entregables del equipo COES, con enfoque en:
+
+- Distribución de plataformas
+- Herramientas de desarrollo utilizadas
+- Transacciones y errores frecuentes
+- Segmentación por categoría de servicio
 
 ## 📁 Estructura del Proyecto
 
 ```bash
-├── datos/
-│ ├── inventario_servicios_apis.csv
+├── Analisis_EDA/
+├── Files/
+│ ├── Inventario de Servicios y Apis Producción.xlsx
 │ └── opensearch_filtrado.csv
-├── scripts/
+│ ├── Opensearch.xlsx
+│ └── inventario_servicios_apis.csv
+├── img/
+│ ├── udea.png
+│ └── base_datos.png
+├── Reports/
+│ ├── Analisis_EDA_Opensearch.html
+│ └── Analisis_EDA_servicios_apis.html
+├── SQL/
 │ ├── base_datos.sql
 │ ├── tablas.sql
-│ └── etl_pipeline.py
+│ └── database.sql
+├── exploratorio.ipynb
+├── limipieza_datos.ipynb
 ├── README.md
 ```
 
+# Arquitectura
+
+![udea](Analisis_EDA/img/udea.png)
 ---
 
 ## 🚀 Flujo ETL
@@ -45,12 +68,15 @@ Se cargan los datos desde archivos CSV ubicados en la carpeta `datos/`.
   - pandas
   - mysql-connector-python
   - unidecode
+  - ydata-profiling
+  - py4j
+  - ipywidgets
 
 Instala los paquetes necesarios:
 
 ```bash
-pip install pandas mysql-connector-python unidecode
-
+pip install pandas mysql-connector-python unidecode, etc
+```
 ---
 
 ## 🚀 Flujo ETL
@@ -76,41 +102,28 @@ Se cargan los datos desde archivos CSV ubicados en la carpeta `datos/`.
 
 ## 🧰 Requisitos
 
-- Python 3.8+
-- MySQL Server
-- Paquetes Python:
-  - pandas
-  - mysql-connector-python
-  - unidecode
-
-Instala los paquetes necesarios:
+### ⚙️ Configuración de Base de Datos
 
 ```bash
-pip install pandas mysql-connector-python unidecode
-
-⚙️ Configuración de Base de Datos
-
 mysql -u root -p < scripts/base_datos.sql
+```
 
 Ejecuta el script tablas.sql para crear las tablas:
-
+```bash
 mysql -u root -p inventario_datos < scripts/tablas.sql
+```
 
-
-🔐 Conexión externa para Looker Studio
+### 🔐 Conexión externa para Looker Studio
 Para permitir acceso a Looker Studio de forma segura:
 
 Crea un usuario limitado en MySQL:
 
-sql
-Copiar
-Editar
+```bash
 CREATE USER 'usuario_looker'@'%' IDENTIFIED BY 'password.123';
 GRANT SELECT ON inventario_datos.* TO 'usuario_looker'@'%';
 FLUSH PRIVILEGES;
-Asegúrate de exponer el puerto 3306 con seguridad o replica la base de datos a un servidor en la nube (Google Cloud SQL, PlanetScale, etc.).
-
+```
 
 ✍️ Autores
-Leandro Rivera Ríos, 
+Andrea Estefania Hernandez, Daniel Alvarez, Leandro Rivera Ríos, Luz Marina Getial, 
 Proyecto desarrollado en el contexto de integración de datos corporativos para análisis y visualización de consumo de APIs y servicios.
